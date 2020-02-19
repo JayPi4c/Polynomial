@@ -13,9 +13,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Deploy to Github Package Registry
-      env:
-        GITHUB_USERNAME: JayPi4c
-        GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+    - name: Run all Tests
       run:
-        mvn --settings settings.xml deploy
+        mvn test

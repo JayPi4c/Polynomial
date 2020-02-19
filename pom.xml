@@ -4,14 +4,49 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.JayPi4c</groupId>
 	<artifactId>Polynomial</artifactId>
-	<version>v1.0.0</version>
+	<version>1.0.0</version>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>Polynomial</name>
-			<url>https://maven.pkg.github.com/JayPi4c/Polynomial</url>
-		</repository>
-	</distributionManagement>
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration> <!-- Compile java 8 compatible bytecode -->
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>  <!-- Create sources.jar -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<failOnError>false</failOnError>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
