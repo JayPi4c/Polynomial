@@ -1,13 +1,12 @@
 package com.JayPi4c;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Die Klasse Polynomial bietet die Möglichkeit mit einem Polynom zu rechnen und
- * arbeiten, was die Arbeit mit einem Polynom deutlich vereinfachen kann.
+ * Die Klasse Polynomial bietet die Möglichkeit mit einem Polynom zu rechnen
+ * und arbeiten, was die Arbeit mit einem Polynom deutlich vereinfachen kann.
  * 
  * @author JayPi4c
  *
@@ -18,33 +17,33 @@ public class Polynomial {
 	 * Ein Polynom besteht aus einzelnen Teilen und diese werden in diesem Array
 	 * gespeichert.
 	 */
-	private ArrayList<Term> polynomial;
+	private ArrayList<Monomial> polynomial;
 
 	/**
 	 * Erstelle ein leeres Polynomobjekt
 	 */
 	public Polynomial() {
-		polynomial = new ArrayList<Term>();
+		polynomial = new ArrayList<Monomial>();
 	}
 
 	/**
-	 * Erstelle einen Polynom aus einem Array aus Termen
+	 * Erstelle einen Polynom aus einem Array aus Monomialen
 	 * 
-	 * @param terms
+	 * @param monomials
 	 */
-	public Polynomial(Term... terms) {
-		polynomial = new ArrayList<Term>(Arrays.asList(terms));
+	public Polynomial(Monomial... monomials) {
+		polynomial = new ArrayList<Monomial>(Arrays.asList(monomials));
 		this.fill();
 	}
 
 	/**
-	 * Erstelle einen Polynom aus einer ArrayList aus Termen
+	 * Erstelle einen Polynom aus einer ArrayList aus Monomialen
 	 * 
-	 * @param terms
+	 * @param monomials
 	 */
-	public Polynomial(ArrayList<Term> terms) {
-		this.polynomial = new ArrayList<Term>();
-		for (Term t : terms)
+	public Polynomial(ArrayList<Monomial> monomials) {
+		this.polynomial = new ArrayList<Monomial>();
+		for (Monomial t : monomials)
 			this.polynomial.add(t.copy());
 		this.combine();
 		this.fill();
@@ -63,9 +62,9 @@ public class Polynomial {
 	public Polynomial(double[] coefficients, int[] degrees) {
 		if (coefficients.length != degrees.length)
 			throw new IllegalArgumentException("Die Anzahl der Koeffizienten und Grade ist nicht identisch!");
-		this.polynomial = new ArrayList<Term>();
+		this.polynomial = new ArrayList<Monomial>();
 		for (int i = 0; i < coefficients.length; i++)
-			this.polynomial.add(new Term(coefficients[i], degrees[i]));
+			this.polynomial.add(new Monomial(coefficients[i], degrees[i]));
 		this.fill();
 	}
 
@@ -84,12 +83,12 @@ public class Polynomial {
 	}
 
 	/**
-	 * Addiert den Term zu dem Polynom
+	 * Addiert den Monomial zu dem Polynom
 	 * 
 	 * @param t
 	 * @return this after math is done
 	 */
-	public Polynomial add(Term t) {
+	public Polynomial add(Monomial t) {
 		this.polynomial.add(t);
 		this.combine();
 		this.reorder();
@@ -105,7 +104,7 @@ public class Polynomial {
 	 * @return this after math is done
 	 */
 	public Polynomial mult(double scl) {
-		for (Term t : this.polynomial)
+		for (Monomial t : this.polynomial)
 			t.mult(scl);
 		this.fill();
 		return this;
@@ -118,13 +117,14 @@ public class Polynomial {
 	 * @return this
 	 */
 	public Polynomial mult(Polynomial p) {
-		ArrayList<Term> terms = new ArrayList<Term>();
-		for (Term t : this.polynomial) {
-			for (Term other : p.getPolynomial()) {
-				terms.add(new Term(t.getCoefficient() * other.getCoefficient(), t.getDegree() + other.getDegree()));
+		ArrayList<Monomial> monomials = new ArrayList<Monomial>();
+		for (Monomial t : this.polynomial) {
+			for (Monomial other : p.getPolynomial()) {
+				monomials.add(
+						new Monomial(t.getCoefficient() * other.getCoefficient(), t.getDegree() + other.getDegree()));
 			}
 		}
-		this.polynomial = terms;
+		this.polynomial = monomials;
 		this.combine();
 		this.reorder();
 		this.fill();
@@ -132,13 +132,13 @@ public class Polynomial {
 	}
 
 	/**
-	 * Diese Funktion kombiniert die Terme mit den gleichen Graden.
+	 * Diese Funktion kombiniert die Monomiale mit den gleichen Graden.
 	 */
 	public void combine() {
 		for (int i = 0; i < this.polynomial.size() - 1; i++) {
 			for (int j = i + 1; j < this.polynomial.size(); j++) {
-				Term a = this.polynomial.get(i);
-				Term b = this.polynomial.get(j);
+				Monomial a = this.polynomial.get(i);
+				Monomial b = this.polynomial.get(j);
 				if (a.isCombinable(b)) {
 					a.combine(b);
 					this.polynomial.remove(j);
@@ -155,7 +155,7 @@ public class Polynomial {
 			int degree = -1;
 			int index = -1;
 			for (int j = i; j < this.polynomial.size(); j++) {
-				Term t = this.polynomial.get(j);
+				Monomial t = this.polynomial.get(j);
 				if (degree < t.getDegree()) {
 					degree = t.getDegree();
 					index = j;
@@ -166,19 +166,19 @@ public class Polynomial {
 	}
 
 	/**
-	 * Ein Polynom kann quasi immer auch Terms beinhalten, die den Koeffizienten 0
-	 * haben. Da die Konstruktoren keine sortierten und vollst&aumlndigen Terme
-	 * brauchen können hiermit die fehlenden Terme eingef&uumlgt werden, sodass der
-	 * Polynom auch vollst&aumlndig geschrieben werden kann.
+	 * Ein Polynom kann quasi immer auch Monomials beinhalten, die den Koeffizienten
+	 * 0 haben. Da die Konstruktoren keine sortierten und vollst&aumlndigen
+	 * Monomiale brauchen können hiermit die fehlenden Monomiale eingef&uumlgt
+	 * werden, sodass der Polynom auch vollst&aumlndig geschrieben werden kann.
 	 */
 	public void fill() {
 		for (int i = this.getDegree(); i >= 0; i--) {
 			boolean found = false;
-			for (Term t : this.polynomial)
+			for (Monomial t : this.polynomial)
 				if (found = i == t.getDegree())
 					break;
 			if (!found)
-				this.polynomial.add(this.getDegree() - i, new Term(0, i));
+				this.polynomial.add(this.getDegree() - i, new Monomial(0, i));
 		}
 	}
 
@@ -188,7 +188,7 @@ public class Polynomial {
 	 */
 	public Polynomial getDerivation() {
 		Polynomial p = new Polynomial();
-		for (Term t : this.polynomial)
+		for (Monomial t : this.polynomial)
 			try {
 				p.add(t.getDerivation());
 			} catch (IllegalArgumentException ex) {
@@ -200,13 +200,13 @@ public class Polynomial {
 
 	/**
 	 * Gibt den Grad des Polynoms zur&uumlck. Ist der Polynom leer, bzw. hat keine
-	 * Terms, dann wird -1 zur&uumlckgegeben.
+	 * Monomials, dann wird -1 zur&uumlckgegeben.
 	 * 
 	 * @return degree or -1
 	 */
 	public int getDegree() {
 		int degree = -1;
-		for (Term t : polynomial) {
+		for (Monomial t : polynomial) {
 			int d = t.getDegree();
 			if (degree < d)
 				degree = d;
@@ -217,8 +217,8 @@ public class Polynomial {
 	/**
 	 * Schreibt den Polynom in die Konsole
 	 */
-	public void print() {
-		System.out.println(getFormular());
+	public void print(PrintStream stream) {
+		stream.println(getFormular());
 	}
 
 	// https://de.wikipedia.org/wiki/Polynomdivision#Algorithmus
@@ -240,10 +240,10 @@ public class Polynomial {
 	public String getFormular() {
 		String s = "";
 		for (int i = 0; i < this.polynomial.size() - 1; i++) {
-			s += this.polynomial.get(i).print();
+			s += this.polynomial.get(i).toString();
 			s += this.polynomial.get(i + 1).getCoefficient() < 0 ? "" : "+";
 		}
-		s += this.polynomial.get(this.polynomial.size() - 1).print();
+		s += this.polynomial.get(this.polynomial.size() - 1).toString();
 		return s;
 	}
 
@@ -255,11 +255,11 @@ public class Polynomial {
 	public String getFormularFormatted() {
 		String s = "";
 		for (int i = 0; i < this.polynomial.size() - 1; i++) {
-			s += this.polynomial.get(i).printFormatted();
+			s += this.polynomial.get(i).toStringFormatted();
 			s += this.polynomial.get(i + 1).getCoefficient() < 0 ? "" : "+";
 		}
 		if (this.polynomial.size() > 0)
-			s += this.polynomial.get(this.polynomial.size() - 1).printFormatted();
+			s += this.polynomial.get(this.polynomial.size() - 1).toStringFormatted();
 		return s;
 
 	}
@@ -291,7 +291,7 @@ public class Polynomial {
 	public double getY(double x) {
 		double sum = 0;
 		for (int i = 0; i < this.polynomial.size(); i++) {
-			Term t = this.getPolynomial().get(i);
+			Monomial t = this.getPolynomial().get(i);
 			sum += t.getCoefficient() * Math.pow(x, t.getDegree());
 		}
 		return sum;
@@ -299,175 +299,12 @@ public class Polynomial {
 
 	// ----------------------HELPER--------------
 	/**
-	 * Gibt die List der Terms, die den Polynom darstellen zur&uumlck
+	 * Gibt die List der Monomials, die den Polynom darstellen zur&uumlck
 	 * 
-	 * @return Term ArrayList
+	 * @return Monomial ArrayList
 	 */
-	public ArrayList<Term> getPolynomial() {
+	public ArrayList<Monomial> getPolynomial() {
 		return this.polynomial;
 	}
 
-	/**
-	 * 
-	 * @author JayPi4c
-	 *
-	 */
-	public class Term {
-
-		private int degree;
-		private double coefficient;
-
-		/**
-		 * Erstelle einen Term mit dem Koeffizienten und Grad
-		 * 
-		 * @param coefficient
-		 * @param degree
-		 */
-		public Term(double coefficient, int degree) {
-			this.coefficient = coefficient;
-			this.degree = degree;
-		}
-
-		/**
-		 * Erstelle einen Term mit dem festgelegten Koeffizienten und dem Grad 0
-		 * 
-		 * @param coefficient
-		 */
-		public Term(double coefficient) {
-			this.coefficient = coefficient;
-			this.degree = 0;
-		}
-
-		/**
-		 * Erstelle einen Term, mit dem festgelegten Grad und dem Koeffizienten 1
-		 * 
-		 * @param degree
-		 */
-		public Term(int degree) {
-			this.degree = degree;
-			this.coefficient = 1;
-		}
-
-		// ------------------FUNCTIONS-----------------
-		/**
-		 * 
-		 * @param t
-		 * @return true, if same degree
-		 */
-		public boolean isCombinable(Term t) {
-			return this.degree == t.getDegree();
-		}
-
-		/**
-		 * Wenn zwei Terme den gleichen Grad haben, dann können die Terme kombiniert
-		 * werden.
-		 * 
-		 * @param t der Term, der mit dem aufrufenden kombiniert wird
-		 * @return this
-		 */
-		public Term combine(Term t) {
-			if (!this.isCombinable(t))
-				throw new IllegalArgumentException("Diese Teile können nicht kombiniert werden!");
-			this.coefficient += t.getCoefficient();
-			return this;
-		}
-
-		/**
-		 * Sofern der Grad > 0, kann der Term abgeleitet werden.
-		 * 
-		 * @return true, if term derivable
-		 */
-		public boolean isDerivable() {
-			return this.degree > 0;
-		}
-
-		/**
-		 * Leitet den Term ab, sofern dies überhaupt m&oumlglich ist.
-		 * 
-		 * @throws IllegalAccessException if Term is not derivable
-		 * @return derivated Term
-		 */
-		public Term getDerivation() {
-			if (!this.isDerivable())
-				throw new IllegalArgumentException("Dieser Teil ist nicht ableitbar");
-			return new Term(this.coefficient * this.degree, this.degree - 1);
-		}
-
-		/**
-		 * Multipliziert den Term mit dem Skalar
-		 * 
-		 * @param scl
-		 * @return this
-		 */
-		public Term mult(double scl) {
-			this.coefficient *= scl;
-			return this;
-		}
-
-		/**
-		 * Gibt den Term als String zur&uumlck
-		 * 
-		 * @return String Term
-		 */
-		public String print() {
-			return this.coefficient + (this.degree > 0 ? "x^" + this.degree : "");
-		}
-
-		/**
-		 * Gibt den Term in formatierter Version zur&uumlck
-		 * 
-		 * @return formatted Term
-		 */
-		public String printFormatted() {
-			DecimalFormat df = new DecimalFormat("#.####");
-			df.setRoundingMode(RoundingMode.HALF_UP);
-			return df.format(coefficient) + (this.degree > 0 ? "x^" + this.degree : "");
-		}
-
-		// ---------------------HELPER-----------------------------
-		/**
-		 * Gibt den Grad des aufrufenden Terms zur&uumlck
-		 * 
-		 * @return degree
-		 */
-		public int getDegree() {
-			return this.degree;
-		}
-
-		/**
-		 * Setzt den Grad des aufrufenden Terms
-		 * 
-		 * @param degree
-		 */
-		public void setDegree(int degree) {
-			this.degree = degree;
-		}
-
-		/**
-		 * Gibt den Koeffizienten des aufrufenden Terms zur&uumlck
-		 * 
-		 * @return coefficient
-		 */
-		public double getCoefficient() {
-			return this.coefficient;
-		}
-
-		/**
-		 * Setzt den Koeffizienten des aufrufenden Terms
-		 * 
-		 * @param coefficient
-		 */
-		public void setCoefficient(double coefficient) {
-			this.coefficient = coefficient;
-		}
-
-		/**
-		 * 
-		 * @return eine unabhängige Kopie des aufrufenden Terms
-		 */
-		public Term copy() {
-			return new Term(this.coefficient, this.degree);
-		}
-
-	}
 }
