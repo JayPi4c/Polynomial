@@ -14,7 +14,7 @@ public class Monomial {
 	private double coefficient;
 
 	/**
-	 * Erstelle einen Monomial mit dem Koeffizienten und Grad
+	 * Create a monomial with the coefficient and degree.
 	 * 
 	 * @param coefficient
 	 * @param degree
@@ -25,7 +25,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Erstelle einen Monomial mit dem festgelegten Koeffizienten und dem Grad 0
+	 * Create a monomial with the specified coefficient and degree 0.
 	 * 
 	 * @param coefficient
 	 */
@@ -35,7 +35,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Erstelle einen Monomial, mit dem festgelegten Grad und dem Koeffizienten 1
+	 * Create a monomial with the specified degree and the coefficient 1.
 	 * 
 	 * @param degree
 	 */
@@ -55,42 +55,29 @@ public class Monomial {
 	}
 
 	/**
-	 * Wenn zwei Monomiale den gleichen Grad haben, dann können die Monomiale
-	 * kombiniert werden.
+	 * If two monomials have the same degree, then the monomials can be combined.
 	 * 
-	 * @param t der Monomial, der mit dem aufrufenden kombiniert wird
+	 * @param t the monomial that is combined with the calling one.
 	 * @return this
 	 */
 	public Monomial combine(Monomial t) {
 		if (!this.isCombinable(t))
-			throw new IllegalArgumentException("Diese Teile können nicht kombiniert werden!");
+			throw new IllegalArgumentException("These parts cannot be combined!");
 		this.coefficient += t.getCoefficient();
 		return this;
 	}
 
 	/**
-	 * Sofern der Grad > 0, kann der Monomial abgeleitet werden.
+	 * Derive the monomial.
 	 * 
-	 * @return true, if term derivable
-	 */
-	public boolean isDerivable() {
-		return this.degree > 0;
-	}
-
-	/**
-	 * Leitet den Monomial ab, sofern dies überhaupt m&oumlglich ist.
-	 * 
-	 * @throws IllegalAccessException if Monomial is not derivable
-	 * @return derivated Monomial
+	 * @return derived monomial
 	 */
 	public Monomial getDerivation() {
-		if (!this.isDerivable())
-			throw new IllegalArgumentException("Dieser Teil ist nicht ableitbar");
 		return new Monomial(this.coefficient * this.degree, this.degree - 1);
 	}
 
 	/**
-	 * Multipliziert den Monomial mit dem Skalar
+	 * Multiply the monomial by the scalar.
 	 * 
 	 * @param scl
 	 * @return this
@@ -101,7 +88,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Gibt den Monomial als String zur&uumlck
+	 * Returns the monomial as string.
 	 * 
 	 * @return String Monomial
 	 */
@@ -111,7 +98,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Gibt den Monomial in formatierter Version zur&uumlck
+	 * Returns the monomial in formatted version.
 	 * 
 	 * @return formatted Monomial
 	 */
@@ -126,8 +113,9 @@ public class Monomial {
 	}
 
 	// ---------------------HELPER-----------------------------
+
 	/**
-	 * Gibt den Grad des aufrufenden Monomials zur&uumlck
+	 * Returns the degree of the calling monomial.
 	 * 
 	 * @return degree
 	 */
@@ -136,7 +124,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Setzt den Grad des aufrufenden Monomials
+	 * Sets the degree of the calling monomial.
 	 * 
 	 * @param degree
 	 */
@@ -145,7 +133,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Gibt den Koeffizienten des aufrufenden Monomials zur&uumlck
+	 * Returns the coefficient of the calling monomial.
 	 * 
 	 * @return coefficient
 	 */
@@ -154,7 +142,7 @@ public class Monomial {
 	}
 
 	/**
-	 * Setzt den Koeffizienten des aufrufenden Monomials
+	 * Sets the coefficient of the calling monomial.
 	 * 
 	 * @param coefficient
 	 */
@@ -164,7 +152,7 @@ public class Monomial {
 
 	/**
 	 * 
-	 * @return eine unabhängige Kopie des aufrufenden Monomials
+	 * @return an independent copy of the calling monomial.
 	 */
 	public Monomial copy() {
 		return new Monomial(this.coefficient, this.degree);

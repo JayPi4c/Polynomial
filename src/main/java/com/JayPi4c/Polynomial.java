@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Die Klasse Polynomial bietet die Möglichkeit mit einem Polynom zu rechnen
- * und arbeiten, was die Arbeit mit einem Polynom deutlich vereinfachen kann.
+ * The polynomial class offers the possibility to calculate and work with a
+ * polynomial, which makes working with polynomials much easier.
  * 
  * @author JayPi4c
  *
@@ -14,20 +14,19 @@ import java.util.Arrays;
 public class Polynomial {
 
 	/**
-	 * Ein Polynom besteht aus einzelnen Teilen und diese werden in diesem Array
-	 * gespeichert.
+	 * a polynomial is a collection of monomials, which are stored in this array
 	 */
 	private ArrayList<Monomial> polynomial;
 
 	/**
-	 * Erstelle ein leeres Polynomobjekt
+	 * Create an empty polynomial object.
 	 */
 	public Polynomial() {
 		polynomial = new ArrayList<Monomial>();
 	}
 
 	/**
-	 * Erstelle einen Polynom aus einem Array aus Monomialen
+	 * Create a polynomial from an array of monomials.
 	 * 
 	 * @param monomials
 	 */
@@ -37,7 +36,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Erstelle einen Polynom aus einer ArrayList aus Monomialen
+	 * Create a polynomial from an ArrayList of monomials.
 	 * 
 	 * @param monomials
 	 */
@@ -52,7 +51,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Erstelle einen Polynom mit den Graden und Koeffizienten
+	 * Create a polynomial with the degrees and coefficients.
 	 * 
 	 * @throws IllegalArgumentException if coefficients and degrees are not of same
 	 *                                  length
@@ -61,7 +60,7 @@ public class Polynomial {
 	 */
 	public Polynomial(double[] coefficients, int[] degrees) {
 		if (coefficients.length != degrees.length)
-			throw new IllegalArgumentException("Die Anzahl der Koeffizienten und Grade ist nicht identisch!");
+			throw new IllegalArgumentException("The number of coefficients and degrees is not identical!");
 		this.polynomial = new ArrayList<Monomial>();
 		for (int i = 0; i < coefficients.length; i++)
 			this.polynomial.add(new Monomial(coefficients[i], degrees[i]));
@@ -69,7 +68,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Addiert den Polynom zu dem Polynom
+	 * Adds the polynomial to the polynomial
 	 * 
 	 * @param p
 	 * @return this after math is done
@@ -83,7 +82,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Addiert den Monomial zu dem Polynom
+	 * Adds the monomial to the polynomial
 	 * 
 	 * @param t
 	 * @return this after math is done
@@ -97,8 +96,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Gibt das Produkt des aufrufenden Polynoms mit dem entsprechenden Skalar
-	 * zur&uumlck
+	 * Returns the product of the calling polynomial with the corresponding scalar.
 	 * 
 	 * @param scl a scalar
 	 * @return this after math is done
@@ -111,7 +109,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Gibt das Produkt der beiden Polynome zur&uumlck
+	 * Returns the product of the two polynomials.
 	 * 
 	 * @param p
 	 * @return this
@@ -132,7 +130,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Diese Funktion kombiniert die Monomiale mit den gleichen Graden.
+	 * This function combines the monomials with the same degrees.
 	 */
 	public void combine() {
 		for (int i = 0; i < this.polynomial.size() - 1; i++) {
@@ -148,7 +146,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Diese Funktion sortiert den Polynom anhand des Grades.
+	 * This function sorts the polynomial by degree.
 	 */
 	public void reorder() {
 		for (int i = 0; i < this.polynomial.size(); i++) {
@@ -166,10 +164,9 @@ public class Polynomial {
 	}
 
 	/**
-	 * Ein Polynom kann quasi immer auch Monomials beinhalten, die den Koeffizienten
-	 * 0 haben. Da die Konstruktoren keine sortierten und vollst&aumlndigen
-	 * Monomiale brauchen können hiermit die fehlenden Monomiale eingef&uumlgt
-	 * werden, sodass der Polynom auch vollst&aumlndig geschrieben werden kann.
+	 * A polynomial can almost always contain monomials with a coefficient of 0.
+	 * Since the constructors do not need sorted and complete monomials, the missing
+	 * monomials can be inserted, so that the polynomial can be written completely.
 	 */
 	public void fill() {
 		for (int i = this.getDegree(); i >= 0; i--) {
@@ -183,24 +180,18 @@ public class Polynomial {
 	}
 
 	/**
-	 * 
-	 * @return a new derivated Polynomial
+	 * @return a new derived polynomial
 	 */
 	public Polynomial getDerivation() {
 		Polynomial p = new Polynomial();
 		for (Monomial t : this.polynomial)
-			try {
-				p.add(t.getDerivation());
-			} catch (IllegalArgumentException ex) {
-				// Wenn hier eine Exception auftaucht ist das kein grosses Problem. Dennoch kann
-				// es in manchen Situationen gut sein, die Exception zu werfen.
-			}
+			p.add(t.getDerivation());
 		return p;
 	}
 
 	/**
-	 * Gibt den Grad des Polynoms zur&uumlck. Ist der Polynom leer, bzw. hat keine
-	 * Monomials, dann wird -1 zur&uumlckgegeben.
+	 * Returns the degree of the polynomial. If the polynomial is empty or has no
+	 * monomials, then -1 is returned.
 	 * 
 	 * @return degree or -1
 	 */
@@ -215,7 +206,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Schreibt den Polynom in die Konsole
+	 * Prints the Polynomial into the PrintStream.
 	 */
 	public void print(PrintStream stream) {
 		stream.println(getFormular());
@@ -224,7 +215,7 @@ public class Polynomial {
 	// https://de.wikipedia.org/wiki/Polynomdivision#Algorithmus
 	// TODO: Implementation von Polynomdivision
 	/**
-	 * Gibt eine unabhägige Kopie des aufrufenden Polynomobjekts zur&uumlck
+	 * Returns an independent copy of the calling polynomial object.
 	 * 
 	 * @return independent Polynomial object
 	 */
@@ -233,7 +224,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Gibt den String des Polynoms zur&uumlck
+	 * Returns the string of the polynomial.
 	 * 
 	 * @return Formular of Polynomial
 	 */
@@ -248,7 +239,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Gibt den String des formatierten Polynoms zur&uumlck
+	 * Returns the string of the formatted polynomial.
 	 * 
 	 * @return formatted Formular of Polynomial
 	 */
@@ -265,8 +256,8 @@ public class Polynomial {
 	}
 
 	/**
-	 * Durch die Newtonsche Methode kann man durch Annäherung immer genauer an die
-	 * Nullstelle kommen. Sofern man einen anfänglichen guess hat
+	 * With the Newton's method one can get closer and closer to the zero point by
+	 * approximation, provided one has an initial guess.
 	 * 
 	 * @see <a href="https://en.wikipedia.org/wiki/Newton%27s_method">Wikipedia
 	 *      Newton Method</a>
@@ -283,7 +274,7 @@ public class Polynomial {
 	}
 
 	/**
-	 * Berechne y für ein gegebenes x
+	 * Calculate y for a given x.
 	 * 
 	 * @param x
 	 * @return calculated y
@@ -298,8 +289,9 @@ public class Polynomial {
 	}
 
 	// ----------------------HELPER--------------
+
 	/**
-	 * Gibt die List der Monomials, die den Polynom darstellen zur&uumlck
+	 * Returns the list of monomials representing the polynomial.
 	 * 
 	 * @return Monomial ArrayList
 	 */
