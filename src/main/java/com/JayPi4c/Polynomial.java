@@ -150,7 +150,7 @@ public class Polynomial {
 	 */
 	public void reorder() {
 		for (int i = 0; i < this.polynomial.size(); i++) {
-			int degree = -1;
+			int degree = -Integer.MAX_VALUE;
 			int index = -1;
 			for (int j = i; j < this.polynomial.size(); j++) {
 				Monomial t = this.polynomial.get(j);
@@ -191,12 +191,12 @@ public class Polynomial {
 
 	/**
 	 * Returns the degree of the polynomial. If the polynomial is empty or has no
-	 * monomials, then -1 is returned.
+	 * monomials, then 0 is returned.
 	 * 
-	 * @return degree or -1
+	 * @return degree or 0
 	 */
 	public int getDegree() {
-		int degree = -1;
+		int degree = 0;
 		for (Monomial t : polynomial) {
 			int d = t.getDegree();
 			if (degree < d)
